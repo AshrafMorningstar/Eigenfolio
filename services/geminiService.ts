@@ -1,39 +1,34 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { ChatMessage } from "../types";
 
-const apiKey = process.env.API_KEY || '';
-
-// Initialize only if key exists to avoid crash on load if missing (will handle error in UI)
-const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
+// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+// Assume this variable is pre-configured, valid, and accessible.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const sendMessageToGemini = async (
   history: ChatMessage[],
   newMessage: string
 ): Promise<string> => {
-  if (!ai) {
-    return "Error: API Key not configured. Please check your environment variables.";
-  }
-
   try {
     const model = 'gemini-2.5-flash';
     
-    // We construct a simple prompt with history for context
-    // In a real production app, we would use the ChatSession API for better history management
-    // But for this stateless service call:
-    
-    let contextPrompt = "You are a helpful AI assistant inside Ashraf's Portfolio OS. You are witty, professional, and knowledgeable about web development.\n\nConversation History:\n";
-    
+    // Construct prompt from conversation history
+    let prompt = "Conversation History:\n";
     history.forEach(msg => {
-      contextPrompt += `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.text}\n`;
+      prompt += `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.text}\n`;
     });
-    
-    contextPrompt += `\nUser: ${newMessage}\nAssistant:`;
+    prompt += `\nUser: ${newMessage}\nAssistant:`;
 
+    // Use systemInstruction in config as per guidelines
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: model,
-      contents: contextPrompt,
+      contents: prompt,
+      config: {
+        systemInstruction: "You are a helpful AI assistant inside Ashraf's Portfolio OS. You are witty, professional, and knowledgeable about web development.",
+      }
     });
 
+    // Access text property directly
     return response.text || "I'm sorry, I couldn't generate a response.";
   } catch (error) {
     console.error("Gemini API Error:", error);

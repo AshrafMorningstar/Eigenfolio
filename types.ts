@@ -1,11 +1,11 @@
 import React from 'react';
 
-export type AppId = 'finder' | 'projects' | 'ai-chat' | 'tictactoe' | 'settings' | 'browser';
+export type AppId = 'finder' | 'projects' | 'ai-chat' | 'tictactoe' | 'memory' | 'settings' | 'browser' | 'terminal' | 'mail' | 'about';
 
 export interface AppConfig {
   id: AppId;
   title: string;
-  icon: string; // URL or emoji for simplicity in this proto
+  icon: string;
   component: React.ComponentType;
   defaultWidth: number;
   defaultHeight: number;
@@ -30,10 +30,26 @@ export interface Project {
   tech: string[];
   link: string;
   image: string;
+  featured?: boolean;
 }
 
 export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
   timestamp: number;
+}
+
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  timestamp: number;
+  appId?: AppId;
+  read: boolean;
+}
+
+export interface SystemSettings {
+  wallpaper: string;
+  accentColor: string;
+  darkMode: boolean;
 }
