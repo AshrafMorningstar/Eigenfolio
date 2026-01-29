@@ -1,14 +1,6 @@
-/*
- Copyright (c) 2026 Ashraf Morningstar
- These are personal recreations of existing projects, developed by Ashraf Morningstar
- for learning and skill development.
- Original project concepts remain the intellectual property of their respective creators.
- Repository: https://github.com/AshrafMorningstar
-*/
-
 import React from 'react';
 
-export type AppId = 'finder' | 'projects' | 'ai-chat' | 'tictactoe' | 'memory' | 'settings' | 'browser' | 'terminal' | 'mail' | 'about';
+export type AppId = 'finder' | 'projects' | 'ai-chat' | 'tictactoe' | 'memory' | 'settings' | 'browser' | 'terminal' | 'mail' | 'about' | 'calculator' | 'notepad' | 'music' | 'files' | 'paint' | 'snake' | 'tasks' | 'camera' | 'weather' | 'code' | 'video' | 'calendar';
 
 export interface AppConfig {
   id: AppId;
@@ -60,4 +52,34 @@ export interface SystemSettings {
   wallpaper: string;
   accentColor: string;
   darkMode: boolean;
+  crtEffect: boolean;
+  soundEnabled: boolean;
+}
+
+export interface SystemState {
+    wifi: boolean;
+    bluetooth: boolean;
+    airplaneMode: boolean;
+    volume: number;
+    brightness: number;
+    batteryLevel: number;
+    isCharging: boolean;
+}
+
+export interface FileNode {
+  id: string;
+  name: string;
+  type: 'folder' | 'file';
+  content?: string; // For text files
+  image?: string; // For image files
+  children?: FileNode[];
+  parentId: string | null;
+}
+
+export interface Process {
+  id: number;
+  name: string;
+  cpu: number;
+  memory: number;
+  appId: AppId;
 }

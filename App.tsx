@@ -1,11 +1,3 @@
-/*
- Copyright (c) 2026 Ashraf Morningstar
- These are personal recreations of existing projects, developed by Ashraf Morningstar
- for learning and skill development.
- Original project concepts remain the intellectual property of their respective creators.
- Repository: https://github.com/AshrafMorningstar
-*/
-
 import React, { useEffect } from 'react';
 import { ICONS } from './constants';
 import { AppConfig } from './types';
@@ -15,6 +7,12 @@ import { useStore } from './store/useStore';
 import MenuBar from './components/os/MenuBar';
 import Dock from './components/os/Dock';
 import Window from './components/os/Window';
+import Desktop from './components/os/Desktop';
+import LockScreen from './components/os/LockScreen';
+import Spotlight from './components/os/Spotlight';
+import ControlCenter from './components/os/ControlCenter';
+import { NeuralInterface } from './components/os/NeuralInterface';
+import BootSequence from './components/system/BootSequence';
 
 // Apps
 import Profile from './components/apps/Profile';
@@ -26,95 +24,124 @@ import Mail from './components/apps/Mail';
 import Settings from './components/apps/Settings';
 import MemoryGame from './components/apps/MemoryGame';
 import About from './components/apps/About';
+import QuantumChess from './components/apps/QuantumChess';
+import Calculator from './components/apps/Calculator';
+import Notepad from './components/apps/Notepad';
+import MusicPlayer from './components/apps/MusicPlayer';
+import FileManager from './components/apps/FileManager';
+import Paint from './components/apps/Paint';
+import Snake from './components/apps/Snake';
+import TaskManager from './components/apps/TaskManager';
+import Camera from './components/apps/Camera';
+import Browser from './components/apps/Browser';
+import CodeEditor from './components/apps/CodeEditor';
+import VideoPlayer from './components/apps/VideoPlayer';
+import CalendarApp from './components/apps/CalendarApp.tsx';
+import Weather from './components/apps/Weather.tsx';
 
 const apps: AppConfig[] = [
-  { id: 'finder', title: 'Finder', icon: ICONS.finder, component: Profile, defaultWidth: 800, defaultHeight: 600 },
-  { id: 'projects', title: 'Projects', icon: ICONS.projects, component: Projects, defaultWidth: 900, defaultHeight: 700 },
-  { id: 'ai-chat', title: 'Gemini AI', icon: ICONS.ai, component: AIChat, defaultWidth: 450, defaultHeight: 600 },
-  { id: 'browser', title: 'GitHub', icon: ICONS.browser, component: () => null, defaultWidth: 0, defaultHeight: 0 }, 
-  { id: 'mail', title: 'Mail', icon: ICONS.mail, component: Mail, defaultWidth: 800, defaultHeight: 550 },
-  { id: 'terminal', title: 'Terminal', icon: ICONS.terminal, component: Terminal, defaultWidth: 600, defaultHeight: 400 },
-  { id: 'tictactoe', title: 'Arcade', icon: ICONS.game, component: TicTacToe, defaultWidth: 400, defaultHeight: 520 },
-  { id: 'memory', title: 'Memory', icon: ICONS.memory, component: MemoryGame, defaultWidth: 420, defaultHeight: 540 },
-  { id: 'settings', title: 'Settings', icon: ICONS.settings, component: Settings, defaultWidth: 700, defaultHeight: 500 },
-  { id: 'about', title: 'About', icon: ICONS.about, component: About, defaultWidth: 350, defaultHeight: 400 },
+  { id: 'finder', title: 'Cosmic Profile', icon: ICONS.finder, component: Profile, defaultWidth: 900, defaultHeight: 650 },
+  { id: 'projects', title: 'Project Nebula', icon: ICONS.projects, component: Projects, defaultWidth: 1000, defaultHeight: 700 },
+  { id: 'files', title: 'Data Bank', icon: ICONS.files, component: FileManager, defaultWidth: 800, defaultHeight: 550 },
+  { id: 'browser', title: 'Cyber Web', icon: ICONS.browser, component: Browser, defaultWidth: 900, defaultHeight: 650 },
+  { id: 'ai-chat', title: 'Neuro AI', icon: ICONS.ai, component: AIChat, defaultWidth: 450, defaultHeight: 600 },
+  { id: 'terminal', title: 'Chronos Terminal', icon: ICONS.terminal, component: Terminal, defaultWidth: 700, defaultHeight: 450 },
+  { id: 'code', title: 'Code Matrix', icon: ICONS.code, component: CodeEditor, defaultWidth: 800, defaultHeight: 600 },
+  { id: 'tasks', title: 'Process Manager', icon: ICONS.tasks, component: TaskManager, defaultWidth: 500, defaultHeight: 600 },
+  { id: 'mail', title: 'Comms Uplink', icon: ICONS.mail, component: Mail, defaultWidth: 800, defaultHeight: 550 },
+  { id: 'paint', title: 'Quantum Canvas', icon: ICONS.paint, component: Paint, defaultWidth: 800, defaultHeight: 600 },
+  { id: 'snake', title: 'Serpent Protocol', icon: ICONS.snake, component: Snake, defaultWidth: 420, defaultHeight: 500 },
+  { id: 'calculator', title: 'Quantum Calc', icon: ICONS.calculator, component: Calculator, defaultWidth: 320, defaultHeight: 480 },
+  { id: 'music', title: 'Cosmic Waves', icon: ICONS.music, component: MusicPlayer, defaultWidth: 400, defaultHeight: 500 },
+  { id: 'video', title: 'HoloView', icon: ICONS.video, component: VideoPlayer, defaultWidth: 700, defaultHeight: 500 },
+  { id: 'notepad', title: 'Star Notes', icon: ICONS.notepad, component: Notepad, defaultWidth: 550, defaultHeight: 450 },
+  { id: 'calendar', title: 'Time Log', icon: ICONS.calendar, component: CalendarApp, defaultWidth: 700, defaultHeight: 600 },
+  { id: 'tictactoe', title: 'Quantum Chess', icon: ICONS.chess, component: QuantumChess, defaultWidth: 500, defaultHeight: 650 },
+  { id: 'memory', title: 'Neural Memory', icon: ICONS.memory, component: MemoryGame, defaultWidth: 460, defaultHeight: 580 },
+  { id: 'settings', title: 'System Core', icon: ICONS.settings, component: Settings, defaultWidth: 800, defaultHeight: 600 },
+  { id: 'camera', title: 'HoloLens', icon: ICONS.camera, component: Camera, defaultWidth: 640, defaultHeight: 520 },
+  { id: 'weather', title: 'Atmosphere', icon: ICONS.weather, component: Weather, defaultWidth: 400, defaultHeight: 600 },
+  { id: 'about', title: 'Manifest', icon: ICONS.about, component: About, defaultWidth: 350, defaultHeight: 400 },
 ];
 
 const App: React.FC = () => {
-  const { openApp, settings, addNotification } = useStore();
-
-  // Handle external link behavior for specific "apps"
-  const handleAppOpen = (id: string) => {
-    if (id === 'browser') {
-       window.open('https://github.com/AshrafMorningstar', '_blank');
-    } else {
-       // @ts-ignore
-       openApp(id);
-    }
-  };
+  const { settings, addNotification, isBooting, isLocked, systemState } = useStore();
 
   useEffect(() => {
-    // Initial System Notification after a delay
-    const timer = setTimeout(() => {
-        addNotification({
-            title: "System Update",
-            message: "AshrafOS v2.0 is running smoothly. Check out the new Memory Game!",
-            appId: 'memory'
-        });
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [addNotification]);
+    if (!isBooting && !isLocked) {
+        // Initial System Notification after boot
+        const timer = setTimeout(() => {
+            addNotification({
+                title: "Neural Link Established",
+                message: "Welcome to Eigenfolio Quantum v2.0. Press Cmd+K for Spotlight.",
+                appId: 'files'
+            });
+        }, 1500);
+        return () => clearTimeout(timer);
+    }
+  }, [addNotification, isBooting, isLocked]);
 
   return (
     <div 
-        className="w-screen h-screen overflow-hidden relative font-sans selection:bg-blue-500 selection:text-white"
+        className={`w-screen h-screen overflow-hidden relative font-sans selection:bg-neuro-purple selection:text-neuro-cyan ${settings.darkMode ? 'text-white' : 'text-slate-900'}`}
         style={{
-            backgroundImage: `url(${settings.wallpaper})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            transition: 'background-image 0.5s ease-in-out',
-            // @ts-ignore
-            '--os-accent': settings.accentColor,
+            backgroundColor: settings.darkMode ? '#050510' : '#f0f0f0',
         }}
     >
-        {/* Dark Overlay for readability */}
-        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+        {isBooting && <BootSequence />}
+        {isLocked && !isBooting && <LockScreen />}
 
-        <MenuBar />
+        {/* Global System Overlays (Brightness, etc) */}
+        <div 
+            className="fixed inset-0 pointer-events-none z-[99999] bg-black transition-opacity duration-300"
+            style={{ opacity: (100 - systemState.brightness) / 100 }}
+        />
 
-        {/* Desktop Area */}
-        <div className="absolute top-8 left-0 w-full h-[calc(100vh-32px)] overflow-hidden">
-            {/* Desktop Icons - Layout Grid */}
-            <div className="absolute top-4 right-4 flex flex-col gap-6 items-end z-0 p-4">
-               {apps.filter(a => a.id !== 'about').map(app => (
-                   <button 
-                    key={app.id}
-                    onClick={() => handleAppOpen(app.id)}
-                    className="flex flex-col items-center gap-1 group w-20 text-center transition-transform hover:scale-105 active:scale-95"
-                   >
-                       <div className="w-14 h-14 md:w-16 md:h-16 bg-white/10 rounded-xl flex items-center justify-center border border-white/5 backdrop-blur-sm group-hover:bg-white/20 transition-colors shadow-lg">
-                           <img src={app.icon} alt={app.title} className="w-9 h-9 md:w-10 md:h-10 object-contain drop-shadow-md" />
-                       </div>
-                       <span 
-                           className="text-white text-[10px] md:text-xs font-medium px-2 py-0.5 rounded bg-black/20 backdrop-blur-md group-hover:text-blue-400 transition-colors shadow-sm"
-                           style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}
-                       >
-                           {app.title}
-                       </span>
-                   </button>
-               ))}
-            </div>
-
-            {/* Windows */}
-            {apps.map(app => {
-                // Browser doesn't have a window in this OS, it opens a tab
-                if (app.id === 'browser') return null;
-                return <Window key={app.id} app={app} />;
-            })}
+        {/* Background Layers */}
+        <div 
+            className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out pointer-events-none"
+            style={{ 
+                backgroundImage: `url(${settings.wallpaper})`,
+                opacity: settings.darkMode ? 0.4 : 0.8,
+                filter: settings.darkMode ? 'contrast(1.2)' : 'brightness(1.1)'
+            }}
+        />
+        
+        {/* Neural Interface (Particles) */}
+        <div className={`transition-opacity duration-1000 ${settings.darkMode ? 'opacity-100' : 'opacity-30'}`}>
+            <NeuralInterface />
         </div>
 
-        {/* Dock */}
-        <Dock apps={apps.filter(app => app.id !== 'about')} />
+        {/* Scanline/CRT Effect */}
+        <div className={`absolute inset-0 pointer-events-none z-[9999] ${settings.crtEffect ? 'opacity-20' : 'opacity-0'} transition-opacity duration-500`} 
+             style={{ 
+                 background: 'linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06))',
+                 backgroundSize: '100% 2px, 3px 100%' 
+             }} 
+        />
+
+        {/* Desktop Environment */}
+        {!isBooting && !isLocked && (
+            <>
+                <MenuBar />
+                <Desktop apps={apps.filter(app => app.id !== 'about')} />
+                
+                {/* Windows Layer */}
+                <div className="absolute top-8 left-0 w-full h-[calc(100vh-32px)] overflow-hidden z-20 pointer-events-none">
+                    {apps.map(app => (
+                        <div key={app.id} className="pointer-events-auto">
+                            <Window app={app} />
+                        </div>
+                    ))}
+                </div>
+
+                <Dock apps={apps.filter(app => app.id !== 'about')} />
+                
+                {/* System Overlays */}
+                <Spotlight />
+                <ControlCenter />
+            </>
+        )}
     </div>
   );
 };

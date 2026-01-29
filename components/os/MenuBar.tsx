@@ -1,18 +1,22 @@
-/*
- Copyright (c) 2026 Ashraf Morningstar
- These are personal recreations of existing projects, developed by Ashraf Morningstar
- for learning and skill development.
- Original project concepts remain the intellectual property of their respective creators.
- Repository: https://github.com/AshrafMorningstar
-*/
-
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { APP_TITLES } from '../../constants';
+import { Battery, Wifi, Search, Command } from 'lucide-react';
 
 const MenuBar: React.FC = () => {
   const [time, setTime] = useState(new Date());
-  const { activeAppId, isNotificationCenterOpen, toggleNotificationCenter, notifications, clearNotifications, openApp, markNotificationRead } = useStore();
+  const { 
+      activeAppId, 
+      isNotificationCenterOpen, 
+      toggleNotificationCenter, 
+      notifications, 
+      clearNotifications, 
+      openApp, 
+      markNotificationRead,
+      toggleControlCenter,
+      toggleSpotlight,
+      systemState
+  } = useStore();
   
   // Safe lookup for app title
   const activeAppTitle = activeAppId ? APP_TITLES[activeAppId] || 'Finder' : 'Finder';
@@ -55,8 +59,30 @@ const MenuBar: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-4 text-white/90">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-white/90">
+             {/* Spotlight Trigger */}
+             <button onClick={toggleSpotlight} className="hover:bg-white/10 p-1 rounded transition-colors" title="Spotlight Search (Cmd+K)">
+                 <Search size={14} />
+             </button>
+
+             {/* Status Icons */}
+             {systemState.wifi && <Wifi size={14} className="hidden sm:block" />}
+             
+             {/* Battery */}
+             <div className="hidden sm:flex items-center gap-1.5 opacity-90">
+                 <span className="text-[10px]">{systemState.batteryLevel}%</span>
+                 <Battery size={16} fill="white" fillOpacity={0.6} />
+             </div>
+
+             {/* Control Center Trigger */}
+             <button 
+                onClick={toggleControlCenter}
+                className="hover:bg-white/10 p-1 rounded transition-colors"
+             >
+                 <Command size={14} />
+             </button>
+
             {/* Notification Icon */}
             <button 
                 onClick={toggleNotificationCenter}
@@ -75,7 +101,7 @@ const MenuBar: React.FC = () => {
             
             <button 
                 className="hover:bg-white/10 px-2 py-0.5 rounded transition-colors" 
-                onClick={toggleNotificationCenter}
+                onClick={() => openApp('calendar')}
             >
                 {formatDate(time)} &nbsp; {formatTime(time)}
             </button>

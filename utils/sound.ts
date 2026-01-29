@@ -1,11 +1,3 @@
-/*
- Copyright (c) 2026 Ashraf Morningstar
- These are personal recreations of existing projects, developed by Ashraf Morningstar
- for learning and skill development.
- Original project concepts remain the intellectual property of their respective creators.
- Repository: https://github.com/AshrafMorningstar
-*/
-
 // Simple synth for UI sounds to avoid external asset dependencies
 class SoundService {
   private ctx: AudioContext | null = null;
